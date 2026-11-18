@@ -5,6 +5,25 @@ private mood playlists. No paid AI APIs, audio downloads, web app or database.
 It only creates new playlists and adds songs to playlists it owns. It never
 removes likes or modifies unrelated playlists.
 
+## One-shot workflow
+
+After copying browser request headers as described below, initialize authentication
+on macOS with `pbpaste | ./organize-once.sh auth`. Start Ollama and explicitly
+download a local model with `ollama pull qwen3:4b`. Then run:
+
+```sh
+./organize-once.sh
+```
+
+The command exports your library on the first run, classifies uncached tracks
+using local Ollama, and shows the approval preview. Read `data/preview.csv`
+before entering the displayed hash. Press Enter to stop. Run
+`./organize-once.sh review` to return to the preview without reclassifying.
+An interrupted run resumes from the saved library and classifications.
+The temporary Python environment is removed when the command exits.
+If you downloaded the Ollama model only for this workflow, remove it afterward
+with `ollama rm qwen3:4b`. Keep `data/sync.json` for safe reruns.
+
 ## Setup (macOS / Linux, Python 3.10+)
 
 ```sh
@@ -58,8 +77,7 @@ Ask Codex to classify each batch and save its JSON array locally, then import it
 
 This uses the current conversation's included usage, not an API key. No Python
 model endpoint is called. Stop and wait if included usage is exhausted; never buy
-credits or switch to paid APIs. An optional local Ollama model can produce the
-same JSON format, but model selection/download is deliberately not automatic.
+credits or switch to paid APIs. The one-shot command supports local Ollama. Install the model explicitly.
 There is no trained classifier bundled with this project.
 
 Song-specific knowledge and verified public sources can inform classification.
